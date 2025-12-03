@@ -393,7 +393,6 @@ var
                 stop(function()
                 {
                     set_title();
-                    set_text($("pattern_name"), "");
                     set_query("");
 
                     life.clear_pattern();
@@ -408,10 +407,14 @@ var
             {
                 stop(function()
                 {
-                    show_overlay("loading_popup");
+                    var loading_timeout = setTimeout(function() {
+                        show_overlay("loading_popup");
+                    }, 500);
+
                     http_get(
                         rle_link("start"),
                         function(text) {
+                            clearTimeout(loading_timeout);
                             setup_pattern(text, "start");
                         }
                     );
@@ -783,7 +786,6 @@ var
 
                         update_hud();
 
-                        set_text($("pattern_name"), "Random pattern");
                         set_title("Random pattern");
 
                         current_pattern = {
@@ -838,7 +840,6 @@ var
 
                 style_element.appendChild(style_text);
 
-                $("pattern_name").style.color =
                 $("statusbar").style.color = drawer.cell_color;
                 $("statusbar").style.textShadow = "0px 0px 1px " + drawer.cell_color;
 
@@ -1546,7 +1547,7 @@ var
         }
         else
         {
-            window.history.replaceState(null, "", "/life/");
+            window.history.replaceState(null, "", "/");
         }
     }
 
