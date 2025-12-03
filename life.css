@@ -73,6 +73,23 @@ html {
 #label_gen, #label_pop, #label_mou, #label_zoom, #label_step, #label_fps {
     padding: 0px 1vw;
 }
+.speed_button {
+    background-color: #ccc;
+    color: #000;
+    cursor: pointer;
+    padding: 0px 8px;
+    margin: 0px 2px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 1px 1px 2px #ccc;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    border: 1px solid #ccc;
+    line-height: 1.2;
+}
+.speed_button:hover {
+    background-color: #fff;
+}
 .button, .menu {
     margin-top: 5px;
 }

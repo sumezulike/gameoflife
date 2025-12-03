@@ -80,13 +80,15 @@ var
         // example setups which are run at startup
         // loaded from examples/
         /** @type {Array.<string>} */
+        /*
         examples = (
             "turingmachine,Turing Machine|gunstar,Gunstar|hacksaw,Hacksaw|tetheredrake,Tethered rake|" +
             "primer,Primer|infinitegliderhotel,Infinite glider hotel|" +
             "p94s,P94S|breeder1,Breeder 1|tlogtgrowth,tlog(t) growth|" +
             "logt2growth,Log(t)^2 growth|infinitelwsshotel,Infinite LWSS hotel|c5greyship,c/5 greyship"
         ).split("|");
-
+        */
+        examples = ["start,Start"];
 
 
     /** @type {function(function())} */
@@ -402,6 +404,20 @@ var
                 });
             };
 
+            $("reset_button").onclick = function()
+            {
+                stop(function()
+                {
+                    show_overlay("loading_popup");
+                    http_get(
+                        rle_link("start"),
+                        function(text) {
+                            setup_pattern(text, "start");
+                        }
+                    );
+                });
+            };
+
             $("rewind_button").onclick = function()
             {
                 if(life.rewind_state)
@@ -429,7 +445,7 @@ var
 
             drawer.canvas.onmousedown = function(e)
             {
-                if(e.which === 3 || e.which === 2)
+                if(e.which === 1)
                 {
                     if(drawer.cell_width >= 1) // only at reasonable zoom levels
                     {
@@ -441,7 +457,7 @@ var
                         do_field_draw(e);
                     }
                 }
-                else if(e.which === 1)
+                else if(e.which === 3 || e.which === 2)
                 {
                     last_mouse_x = e.clientX;
                     last_mouse_y = e.clientY;
@@ -463,27 +479,9 @@ var
                 return false;
             };
 
-            var scaling = false;
-            var last_distance = 0;
-
-            function distance(touches)
-            {
-                console.assert(touches.length >= 2);
-
-                return Math.sqrt(
-                    (touches[0].clientX-touches[1].clientX) * (touches[0].clientX-touches[1].clientX) +
-                    (touches[0].clientY-touches[1].clientY) * (touches[0].clientY-touches[1].clientY));
-            }
-
             drawer.canvas.addEventListener("touchstart", function(e)
             {
-                if(e.touches.length === 2)
-                {
-                    scaling = true;
-                    last_distance = distance(e.touches);
-                    e.preventDefault();
-                }
-                else if(e.touches.length === 1)
+                if(e.touches.length === 1)
                 {
                     // left mouse simulation
                     var ev = {
@@ -500,57 +498,26 @@ var
 
             drawer.canvas.addEventListener("touchmove", function(e)
             {
-                if(scaling)
-                {
-                    let new_distance = distance(e.touches);
-                    let changed = false;
-                    const MIN_DISTANCE = 50;
+                var ev = {
+                    clientX: e.changedTouches[0].clientX,
+                    clientY: e.changedTouches[0].clientY,
+                };
 
-                    while(last_distance - new_distance > MIN_DISTANCE)
-                    {
-                        last_distance -= MIN_DISTANCE;
-                        drawer.zoom_centered(true);
-                        changed = true;
-                    }
+                do_field_move(ev);
 
-                    while(last_distance - new_distance < -MIN_DISTANCE)
-                    {
-                        last_distance += MIN_DISTANCE;
-                        drawer.zoom_centered(false);
-                        changed = true;
-                    }
-
-                    if(changed)
-                    {
-                        update_hud();
-                        lazy_redraw(life.root);
-                    }
-                }
-                else
-                {
-                    var ev = {
-                        clientX: e.changedTouches[0].clientX,
-                        clientY: e.changedTouches[0].clientY,
-                    };
-
-                    do_field_move(ev);
-
-                    e.preventDefault();
-                }
+                e.preventDefault();
             }, false);
 
             drawer.canvas.addEventListener("touchend", function(e)
             {
                 window.onmouseup(e);
                 e.preventDefault();
-                scaling = false;
             }, false);
 
             drawer.canvas.addEventListener("touchcancel", function(e)
             {
                 window.onmouseup(e);
                 e.preventDefault();
-                scaling = false;
             }, false);
 
             window.onmouseup = function(e)
@@ -575,18 +542,6 @@ var
                 return false;
             };
 
-            drawer.canvas.onmousewheel = function(e)
-            {
-                e.preventDefault();
-                drawer.zoom_at((e.wheelDelta || -e.detail) < 0, e.clientX, e.clientY);
-
-                update_hud();
-                lazy_redraw(life.root);
-                return false;
-            };
-
-            drawer.canvas.addEventListener("DOMMouseScroll", drawer.canvas.onmousewheel, false);
-
             window.onkeydown = function(e)
             {
                 var chr = e.which,
@@ -595,6 +550,16 @@ var
 
                 //console.log(e.target)
                 //console.log(chr + " " + e.charCode + " " + e.keyCode);
+
+                // Show shift-only buttons when shift is pressed
+                if(e.shiftKey && !e.ctrlKey && !e.altKey)
+                {
+                    var shift_buttons = document.querySelectorAll('.shift-only');
+                    for(var i = 0; i < shift_buttons.length; i++)
+                    {
+                        shift_buttons[i].style.display = shift_buttons[i].classList.contains('menu') ? 'inline-block' : 'inline';
+                    }
+                }
 
                 if(target === "INPUT" || target === "TEXTAREA")
                 {
@@ -649,18 +614,6 @@ var
                     $("superstep_button").onclick();
                     return false;
                 }
-                else if(chr === 189 || chr === 173 || chr === 109)
-                {
-                    // -
-                    drawer.zoom_centered(true);
-                    do_redraw = true;
-                }
-                else if(chr === 187 || chr === 61)
-                {
-                    // + and =
-                    drawer.zoom_centered(false);
-                    do_redraw = true;
-                }
                 else if(chr === 8)
                 {
                     // backspace
@@ -696,6 +649,19 @@ var
                 return true;
             };
 
+            window.onkeyup = function(e)
+            {
+                // Hide shift-only buttons when shift is released
+                if(e.which === 16) // 16 is the keycode for Shift
+                {
+                    var shift_buttons = document.querySelectorAll('.shift-only');
+                    for(var i = 0; i < shift_buttons.length; i++)
+                    {
+                        shift_buttons[i].style.display = 'none';
+                    }
+                }
+            };
+
             $("faster_button").onclick = function()
             {
                 var step = life.step + 1;
@@ -715,64 +681,6 @@ var
                 }
             };
 
-            $("normalspeed_button").onclick = function()
-            {
-                life.set_step(0);
-                set_text($("label_step"), 1);
-            };
-
-            $("zoomin_button").onclick = function()
-            {
-                drawer.zoom_centered(false);
-                update_hud();
-                lazy_redraw(life.root);
-            };
-
-            $("zoomout_button").onclick = function()
-            {
-                drawer.zoom_centered(true);
-                update_hud();
-                lazy_redraw(life.root);
-            };
-
-            $("initial_pos_button").onclick = function()
-            {
-                fit_pattern();
-                lazy_redraw(life.root);
-                update_hud();
-            };
-
-            $("middle_button").onclick = function()
-            {
-                drawer.center_view();
-                lazy_redraw(life.root);
-            };
-
-            var positions = [
-                ["ne",  1, -1],
-                ["nw", -1, -1],
-                ["se",  1,  1],
-                ["sw", -1,  1],
-                ["n",   0, -1],
-                ["e",  -1,  0],
-                ["s",   0,  1],
-                ["w",   1,  0],
-            ];
-
-            for(var i = 0; i < positions.length; i++)
-            {
-                var node = document.getElementById(positions[i][0] + "_button");
-
-                node.onclick = (function(info)
-                {
-                    return function()
-                    {
-                        drawer.move(info[1] * -30, info[2] * -30);
-                        lazy_redraw(life.root);
-                    };
-                })(positions[i]);
-
-            }
 
             var select_rules = $("select_rules").getElementsByTagName("span");
 
@@ -970,11 +878,6 @@ var
                 hide_overlay();
             };
 
-            $("pattern_name").onclick = function()
-            {
-                show_alert(current_pattern);
-            };
-
             $("about_button").onclick = function()
             {
                 show_overlay("about");
@@ -1144,7 +1047,7 @@ var
         drawer.cell_color = "#cccccc";
 
         drawer.border_width = DEFAULT_BORDER;
-        drawer.cell_width = 2;
+        drawer.cell_width = 16;
 
         life.rule_b = 1 << 3;
         life.rule_s = 1 << 2 | 1 << 3;
@@ -1153,7 +1056,7 @@ var
 
         max_fps = DEFAULT_FPS;
 
-        set_text($("label_zoom"), "1:2");
+        set_text($("label_zoom"), "1:16");
         fix_width($("label_mou"));
 
         drawer.center_view();
@@ -1233,7 +1136,6 @@ var
             drawer.redraw(life.root);
 
             update_hud();
-            set_text($("pattern_name"), result.title || "no name");
             set_title(result.title);
 
             document.querySelector("meta[name=description]").content =

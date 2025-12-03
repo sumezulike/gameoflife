@@ -310,26 +310,20 @@ function LifeCanvasDrawer()
     {
         var width = bounds.right - bounds.left,
             height = bounds.bottom - bounds.top,
-            relative_size,
             x,
             y;
 
+        // Fixed zoom level at 1:16
+        drawer.cell_width = 16;
+
         if(isFinite(width) && isFinite(height))
         {
-            relative_size = Math.min(
-                16, // maximum cell size
-                canvas_width / width, // relative width
-                canvas_height / height // relative height
-            );
-            zoom_to(relative_size);
-
             x = Math.round(canvas_width / 2 - (bounds.left + width / 2) * drawer.cell_width);
             y = Math.round(canvas_height / 2 - (bounds.top + height / 2) * drawer.cell_width);
         }
         else
         {
             // can happen if the pattern is empty or very large
-            zoom_to(16);
 
             x = canvas_width >> 1;
             y = canvas_height >> 1;
