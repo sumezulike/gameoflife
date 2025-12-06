@@ -5,6 +5,7 @@
 <title>Conway's Game of Life</title>
 <meta name="description" content="A JavaScript version of Conway's Game of Life, based on the Hashlife-algorithm.">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="fontawesome-free-7.1.0-web/css/all.min.css">
 <link rel="stylesheet" href="life.css" type="text/css">
 <script src="life.js"></script>
 <script src="formats.js"></script>
@@ -13,9 +14,19 @@
 <script src="main.js"></script>
 </head>
 <body>
-<div id="toolbar" style="display: none;">
+<div id="zoom_controls" class="hidden">
+    <div class="button" id="zoomin_button" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+    <div class="button" id="zoomout_button" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></div>
+</div>
 
-    <div class="button" id="about_button">About</div>
+<div id="about_button" class="button hidden" title="About"><i class="fa-solid fa-circle-info"></i></div>
+
+<div id="toolbar" class="hidden">
+    <div class="button" id="rewind_button" title="Rewind"><i class="fa-solid fa-backward-fast"></i></div>
+    <div class="button" id="run_button" title="Run"><i class="fa-solid fa-play"></i></div>
+    <div class="button" id="step_button" title="Step"><i class="fa-solid fa-forward-step"></i></div>
+    <div class="button" id="clear_button" title="Clear"><i class="fa-solid fa-eraser"></i></div>
+
     <div class="menu shift-only" id="examples_menu" style="display: none;">
         <div id="pattern_button">Patterns</div>
     </div>
@@ -23,24 +34,19 @@
     <div id="export_button" class="button shift-only" style="display: none;">Export</div>
     <div id="import_button" class="button shift-only" style="display: none;">Import</div>
     <div class="button shift-only" id="settings_button" style="display: none;">Settings</div>
-    <div class="button" id="clear_button">Clear</div>
-    <div class="button" id="reset_button">Reset</div>
     <div class="button" style="display: none" id="superstep_button">Superstep</div>
-    <div class="button" id="step_button">Step</div>
-    <div class="button" id="rewind_button">Rewind</div>
-    <div class="button" id="run_button">Run</div>
 
 
 </div>
-<div id="statusbar" style="display: none;">
+<div id="statusbar" class="hidden">
+    <div id="slower_button" class="speed_button" title="Slower"><i class="fa-solid fa-minus"></i></div>
+    <div id="label_step" title="Generation per Speed">1</div>
+    <div id="faster_button" class="speed_button" title="Faster"><i class="fa-solid fa-plus"></i></div>
     <div id="label_zoom" title="Zoom"></div>
     <div id="label_mou" title="Mouse Coordinates">0, 0</div>
     <div id="label_fps" title="Frames per Second">0</div>
     <div id="label_gen" title="Generation">0</div>
     <div id="label_pop" title="Population">0</div>
-    <div id="faster_button" class="speed_button" title="Faster">+</div>
-    <div id="label_step" title="Generation per Step">1</div>
-    <div id="slower_button" class="speed_button" title="Slower">&ndash;</div>
 </div>
 <div id="overlay">
     <div id="about">

@@ -322,6 +322,8 @@ var
             hide_overlay();
 
             show_element($("toolbar"));
+            show_element($("zoom_controls"));
+            show_element($("about_button"));
             show_element($("statusbar"));
             show_element($("about_main"));
 
@@ -403,23 +405,6 @@ var
                 });
             };
 
-            $("reset_button").onclick = function()
-            {
-                stop(function()
-                {
-                    var loading_timeout = setTimeout(function() {
-                        show_overlay("loading_popup");
-                    }, 500);
-
-                    http_get(
-                        rle_link("start"),
-                        function(text) {
-                            clearTimeout(loading_timeout);
-                            setup_pattern(text, "start");
-                        }
-                    );
-                });
-            };
 
             $("rewind_button").onclick = function()
             {
@@ -681,6 +666,26 @@ var
 
                     life.set_step(step);
                     set_text($("label_step"), Math.pow(2, step));
+                }
+            };
+
+            $("zoomin_button").onclick = function()
+            {
+                if(drawer.cell_width < 128)
+                {
+                    drawer.zoom_centered(false);
+                    update_hud();
+                    lazy_redraw(life.root);
+                }
+            };
+
+            $("zoomout_button").onclick = function()
+            {
+                if(drawer.cell_width > 1 / 16)
+                {
+                    drawer.zoom_centered(true);
+                    update_hud();
+                    lazy_redraw(life.root);
                 }
             };
 
@@ -1030,7 +1035,9 @@ var
         if(running)
         {
             running = false;
-            set_text($("run_button"), "Run");
+            var icon = $("run_button").querySelector("i");
+            icon.className = "fa-solid fa-play";
+            $("run_button").title = "Run";
 
             onstop = callback;
         }
@@ -1197,7 +1204,9 @@ var
             interval,
             per_frame = frame_time;
 
-        set_text($("run_button"), "Stop");
+        var icon = $("run_button").querySelector("i");
+        icon.className = "fa-solid fa-pause";
+        $("run_button").title = "Pause";
 
         running = true;
 
@@ -1566,12 +1575,12 @@ var
 
     function hide_element(node)
     {
-        node.style.display = "none";
+        node.classList.add("hidden");
     }
 
     function show_element(node)
     {
-        node.style.display = "block";
+        node.classList.remove("hidden");
     }
 
     function pad0(str, n)

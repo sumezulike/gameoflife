@@ -10,56 +10,173 @@ html {
     height: 100%;
     margin: 0px;
 }
+.hidden {
+    display: none !important;
+}
+/* === TOOLBAR - Bottom bar with main controls === */
 #toolbar {
     position: fixed;
-    top: 0px;
-    right: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
-    color: #000;
-    width: 100%;
-    height: 0;
-    overflow: visible;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    height: 70px;
+    box-sizing: border-box;
 }
-#toolbar > div {
-    float: right;
-}
-#statusbar > div {
-    float: right;
-    border-left: 1px solid #ccc;
-    text-align: center;
-}
-#controls {
-    padding: 5px;
-}
-#controls td div {
-    background-color: #ccc;
-    width: 18px;
-    height: 18px;
-    margin: 2px 1px;
-    font-weight: bold;
-    text-align: center;
 
+/* === ABOUT BUTTON - Top right corner === */
+#about_button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    width: 60px;
+    height: 60px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 2px 2px 3px #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
     -webkit-user-select: none;
     -moz-user-select: none;
-    font-size: 80%;
-    line-height: 150%;
+    user-select: none;
+    transition: background-color 0.2s, transform 0.1s;
+    margin: 0;
+    padding: 0;
 }
+
+#about_button:hover {
+    background-color: #ddd;
+}
+
+#about_button:active {
+    transform: scale(0.95);
+    background-color: #bbb;
+}
+
+/* === ZOOM CONTROLS - Left side vertical buttons === */
+#zoom_controls {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+/* === TOUCH-FRIENDLY BUTTONS === */
+#toolbar .button {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background-color 0.2s, transform 0.1s;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    float: none;
+}
+
+#toolbar .button:hover {
+    background-color: #ddd;
+}
+
+#toolbar .button:active {
+    transform: scale(0.95);
+    background-color: #bbb;
+}
+
+#zoom_controls .button {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    transition: background-color 0.2s, transform 0.1s;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+#zoom_controls .button:hover {
+    background-color: #ddd;
+}
+
+#zoom_controls .button:active {
+    transform: scale(0.95);
+    background-color: #bbb;
+}
+
+/* === STATUSBAR - Bottom right info display === */
 #statusbar {
     position: fixed;
-    bottom: 25px;
-    height: 0;
-    right: 0px;
-    font-size: 13px;
+    bottom: 0;
+    right: 0;
     z-index: 11;
-    width: 99%;
+    font-size: 12px;
     text-shadow: 0px 0px 1px #ccc;
     -webkit-user-select: none;
     -moz-user-select: none;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    align-items: center;
 }
+
+#statusbar > div {
+    border-left: 1px solid #ccc;
+    text-align: center;
+    padding: 0 10px;
+}
+
+#statusbar > div:first-child {
+    border-left: none;
+}
+
 #label_step:before {
-    content: "Step: ";
+    content: "Speed: ";
 }
 #label_fps:before {
     content: "FPS: ";
@@ -73,27 +190,50 @@ html {
 #label_gen, #label_pop, #label_mou, #label_zoom, #label_step, #label_fps {
     padding: 0px 1vw;
 }
+
 .speed_button {
     background-color: #ccc;
     color: #000;
     cursor: pointer;
-    padding: 0px 8px;
-    margin: 0px 2px;
+    padding: 0;
+    margin: 0;
     font-weight: bold;
     text-align: center;
-    box-shadow: 1px 1px 2px #ccc;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     -webkit-user-select: none;
     -moz-user-select: none;
-    border: 1px solid #ccc;
-    line-height: 1.2;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
 }
+
 .speed_button:hover {
-    background-color: #fff;
+    background-color: #ddd;
 }
-.button, .menu {
-    margin-top: 5px;
+
+.speed_button:active {
+    transform: scale(0.95);
+    background-color: #bbb;
 }
-.button, .menu > div {
+
+/* === OLD MENU STYLES (for hidden dialogs) === */
+.menu {
+    background-color: #ccc;
+    cursor: pointer;
+    box-shadow: 2px 2px 3px #ccc;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.menu > div {
     background-color: #ccc;
     cursor: pointer;
     padding: 0px 0.5vw;
@@ -102,6 +242,25 @@ html {
     box-shadow: 2px 2px 3px #ccc;
     -webkit-user-select: none;
     -moz-user-select: none;
+}
+
+#controls {
+    padding: 5px;
+}
+
+#controls td div {
+    background-color: #ccc;
+    width: 18px;
+    height: 18px;
+    margin: 2px 1px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 3px #ccc;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    font-size: 80%;
+    line-height: 150%;
 }
 /*
 .menu {
@@ -120,7 +279,7 @@ html {
     padding: 20px 5px 50px;
     font-size: 13px;
     color: #ddd;
-    z-index: 10;
+    z-index: 100;
     line-height: 1.4;
     border-style: solid;
     border-color: #444;
@@ -140,9 +299,6 @@ html {
 @media (max-width: 800px) {
     #label_mou {
         display: none;
-    }
-    .button {
-        padding: 0px 4px;
     }
     .not_on_small_screen {
         display: none;
@@ -237,3 +393,4 @@ br.clear {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
