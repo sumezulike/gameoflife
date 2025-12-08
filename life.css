@@ -291,8 +291,8 @@ html {
         border-width: 2px;
         border-radius: 15px;
         left: 50%;
-        margin-left: -400px;
-        width: 700px;
+        margin-left: -500px;
+        width: 1000px;
         padding: 50px;
     }
 }
