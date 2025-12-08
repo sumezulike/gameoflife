@@ -311,15 +311,22 @@ var
             drawer.redraw(life.root);
         }
 
-        function load_random()
+        function load_random(auto_run)
         {
-            var random_pattern = examples[Math.random() * examples.length | 0].split(",")[0];
+            // Filter out folder objects and get only pattern strings
+            var patterns = examples.filter(function(item) {
+                return typeof item === "string";
+            });
+            var random_pattern = patterns[Math.random() * patterns.length | 0];
 
             show_overlay("loading_popup");
             http_get(
                 rle_link(random_pattern),
                 function(text) {
                     setup_pattern(text, random_pattern);
+                    if(auto_run) {
+                        run();
+                    }
                 }
             );
         }
@@ -329,7 +336,6 @@ var
         {
             show_element($("about_close"));
 
-            hide_element($("notice"));
             hide_overlay();
 
             show_element($("toolbar"));
@@ -337,7 +343,125 @@ var
             show_element($("about_button"));
             show_element($("statusbar"));
             show_element($("about_main"));
+            show_element($("about_main_de"));
             show_element($("pattern_button"));
+
+            // Internet connection check
+            function check_connection()
+            {
+                var status_el = $("connection_status");
+                var icon = status_el.querySelector("i");
+                if(navigator.onLine)
+                {
+                    // Try to actually reach the internet
+                    fetch("https://www.google.com/favicon.ico", { mode: "no-cors", cache: "no-store" })
+                        .then(function() {
+                            icon.className = "fa-solid fa-wifi";
+                            status_el.title = "Online";
+                        })
+                        .catch(function() {
+                            icon.className = "fa-solid fa-wifi-slash";
+                            status_el.title = "Offline";
+                        });
+                }
+                else
+                {
+                    icon.className = "fa-solid fa-wifi-slash";
+                    status_el.title = "Offline";
+                }
+            }
+            check_connection();
+            setInterval(check_connection, 5000);
+
+            // Idle timer - load random pattern and run after 1 minute of being paused
+            var idle_timeout = null;
+            var countdown_interval = null;
+            var auto_pause_timeout = null;
+            var IDLE_DELAY = 50 * 1000; // 50 seconds before countdown starts
+            var COUNTDOWN_SECONDS = 10;
+            var AUTO_PAUSE_DELAY = 15 * 60 * 1000; // 15 minutes
+
+            function reset_idle_timer()
+            {
+                // Clear any existing timers
+                if(idle_timeout) {
+                    clearTimeout(idle_timeout);
+                }
+                if(countdown_interval) {
+                    clearInterval(countdown_interval);
+                    countdown_interval = null;
+                }
+                if(auto_pause_timeout) {
+                    clearTimeout(auto_pause_timeout);
+                }
+
+                // Restore play button icon if countdown was showing
+                var run_button = $("run_button");
+                var icon = run_button.querySelector("i");
+                icon.textContent = "";
+                if(!running && icon.className !== "fa-solid fa-play") {
+                    icon.className = "fa-solid fa-play";
+                }
+
+                // Auto-pause after 15 minutes of no interaction
+                auto_pause_timeout = setTimeout(function() {
+                    if(running) {
+                        stop();
+                    }
+                }, AUTO_PAUSE_DELAY);
+
+                idle_timeout = setTimeout(function() {
+                    // Don't start countdown if overlay is open
+                    var overlay = $("overlay");
+                    var overlay_is_open = overlay && !overlay.classList.contains("hidden");
+
+                    if(!running && !overlay_is_open) {
+                        // Start countdown
+                        var seconds_left = COUNTDOWN_SECONDS;
+                        var run_button = $("run_button");
+                        var icon = run_button.querySelector("i");
+
+                        // Show initial countdown
+                        icon.className = "";
+                        run_button.querySelector("i").textContent = seconds_left;
+
+                        countdown_interval = setInterval(function() {
+                            // Check if overlay was opened during countdown
+                            var overlay = $("overlay");
+                            var overlay_is_open = overlay && !overlay.classList.contains("hidden");
+
+                            if(overlay_is_open) {
+                                // Cancel countdown if overlay is opened
+                                clearInterval(countdown_interval);
+                                countdown_interval = null;
+                                icon.className = "fa-solid fa-play";
+                                icon.textContent = "";
+                                return;
+                            }
+
+                            seconds_left--;
+                            if(seconds_left > 0) {
+                                run_button.querySelector("i").textContent = seconds_left;
+                            } else {
+                                // Countdown finished, load random pattern
+                                clearInterval(countdown_interval);
+                                countdown_interval = null;
+                                icon.className = "fa-solid fa-play";
+                                icon.textContent = "";
+                                load_random(true);
+                            }
+                        }, 1000);
+                    }
+                }, IDLE_DELAY);
+            }
+
+            // Reset idle timer on any user interaction
+            document.addEventListener("mousedown", reset_idle_timer);
+            document.addEventListener("touchstart", reset_idle_timer);
+            document.addEventListener("keydown", reset_idle_timer);
+
+            // Start the idle timer initially
+            reset_idle_timer();
 
             var style_element = document.createElement("style");
             document.head.appendChild(style_element);
@@ -701,6 +825,13 @@ var
                 }
             };
 
+            $("center_button").onclick = function()
+            {
+                fit_pattern();
+                update_hud();
+                lazy_redraw(life.root);
+            };
+
 
             var select_rules = $("select_rules").getElementsByTagName("span");
 
@@ -800,6 +931,27 @@ var
             {
                 show_overlay("about");
             };
+
+            // Language switcher for About dialog
+            function switch_language()
+            {
+                var en = $("about_en");
+                var de = $("about_de");
+
+                if(en.classList.contains("hidden"))
+                {
+                    hide_element(de);
+                    show_element(en);
+                }
+                else
+                {
+                    hide_element(en);
+                    show_element(de);
+                }
+            }
+
+            $("lang_toggle_en").onclick = switch_language;
+            $("lang_toggle_de").onclick = switch_language;
 
             //$("more_button").onclick = show_pattern_chooser;
             $("pattern_button").onclick = show_pattern_chooser;

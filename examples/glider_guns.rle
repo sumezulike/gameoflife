@@ -1,5 +1,6 @@
+#CXRLE Pos=0,0
 #C A small selection of different glider guns
-x = 242, y = 85, rule = B3/S23
+x = 242, y = 132, rule = B3/S23
 152bo2bo2bo$152b7o2$152b7o$152bo2bo2bo6$153bo2bo$149b2o2bo2bo$149b2o2b
 o2bo7b2o$164b2o4b2o3bo2bo3b2o$170b5o4b5o$170b2o3bo2bo3b2o$164b3o2$137b
 2ob2o$138bobo23b3o$138bobo6b3o$137b2ob2o$138bobo$138bobo6b3o$137b2ob2o
@@ -14,5 +15,6 @@ $37b2o3b2o$35b3obo2b2o104b2o$34bo4bo108b2o7bo2bo2b2o$34bo2b2ob4o113bo
 2o$61b3o3bo3b2o14b2o12b2o4bo3bo51b3o3b3o39b2o9b2o$66bo34b2o3bo5bo8b2o
 87bo2bo9bo$98bobo4b2obo3bo8b2o70b2o15bo2bo$98bo7bo5bo80b2o14b2ob2o9bo$
 107bo3bo98b2o10b2o$109b2o44bo65b2obo15b2o$138b2o15b2o65bobo15b2o$138b
-2o16b2o65b2o$151b2o2b2o4$151b2o2b2o$138b2o16b2o7b2o$138b2o15b2o8b2o$
-155bo!
+2o16b2o65b2o$151b2o2b2o4$102b2o47b2o2b2o$102bo35b2o16b2o7b2o$103bo34b
+2o15b2o8b2o$102b2o51bo37$65b2o$65b2o2b2o$69bobo$70bo$51b2o$51bo15b2o4b
+2o$52bo15bo4b2obo$51b2o12b3o9bo$65bo8bo$75bob2o$77b2o!

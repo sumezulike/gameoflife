@@ -6,17 +6,21 @@
 <meta name="description" content="A JavaScript version of Conway's Game of Life, based on the Hashlife-algorithm.">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <link rel="stylesheet" href="fontawesome-free-7.1.0-web/css/all.min.css">
-<link rel="stylesheet" href="life.css" type="text/css">
-<script src="life.js"></script>
-<script src="formats.js"></script>
-<script src="draw.js"></script>
-<script src="macrocell.js"></script>
-<script src="main.js"></script>
+<script>
+var v = Date.now();
+document.write('<link rel="stylesheet" href="life.css?v=' + v + '" type="text/css">');
+document.write('<script src="life.js?v=' + v + '"><\/script>');
+document.write('<script src="formats.js?v=' + v + '"><\/script>');
+document.write('<script src="draw.js?v=' + v + '"><\/script>');
+document.write('<script src="macrocell.js?v=' + v + '"><\/script>');
+document.write('<script src="main.js?v=' + v + '"><\/script>');
+</script>
 </head>
 <body>
 <div id="zoom_controls" class="hidden">
     <div class="button" id="zoomin_button" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
     <div class="button" id="zoomout_button" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></div>
+    <div class="button" id="center_button" title="Center on Pattern"><i class="fa-solid fa-expand"></i></div>
 </div>
 
 <div id="about_button" class="button hidden" title="About"><i class="fa-solid fa-circle-info"></i></div>
@@ -40,51 +44,118 @@
     <div id="label_fps" title="Frames per Second">0</div>
     <div id="label_gen" title="Generation">0</div>
     <div id="label_pop" title="Population">0</div>
+    <div id="connection_status" title="Internet Connection"><i class="fa-solid fa-wifi"></i></div>
 </div>
 <div id="overlay" class="hidden">
     <div id="about" class="hidden">
-        <h2>Conway's Game of Life in JavaScript</h2>
-        <div id="notice">
-            <h3 style="color: orange">Sorry, this applications needs JavaScript to work.</h3>
-            <div style="text-align: center">
-                <img src="pattern.gif" width="324" height="210" alt="Bi Gun">
+        <!-- English Content -->
+        <div id="about_en" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Conway's Game of Life</h2>
+                <div class="button" id="lang_toggle_en" title="Switch to German" style="font-size: 20px; cursor: pointer;">
+                    🇩🇪 DE
+                </div>
             </div>
+            <h3>How much complexity can emerge from just four simple rules?</h3>
+            Welcome to Conway's Game of Life—a mesmerizing demonstration of how intricate behavior can arise from
+            minimal instructions. Created by mathematician John Conway in 1970, this cellular automaton has captivated
+            computer scientists, mathematicians, and artists for over five decades.
             <br>
             <br>
+            <h3>Why This Matters in Computer Science</h3>
+            <ul>
+                <li><b>Emergence &amp; Complexity:</b> Watch as simple patterns evolve into gliders, spaceships, and oscillators—demonstrating how complex systems emerge from simple rules</li>
+                <li><b>Turing Completeness:</b> The Game of Life is computationally universal—it can simulate any computer program, even itself!</li>
+                <li><b>Algorithm Optimization:</b> This demo uses the Hashlife algorithm, capable of computing billions of generations in seconds by exploiting pattern repetition</li>
+                <li><b>Parallel Computing:</b> Each cell updates independently, making this perfect for studying concurrent systems and GPU programming</li>
+            </ul>
+            <br>
+            <div id="about_main" class="hidden">
+                <h3>The Four Rules</h3>
+                Every cell in this infinite grid follows four simple rules each generation:
+                <br><br>
+                <ol>
+                    <li><b>Birth:</b> A dead cell with exactly <b>three</b> live neighbors comes to life</li>
+                    <li><b>Survival:</b> A live cell with <b>two or three</b> neighbors survives</li>
+                    <li><b>Underpopulation:</b> A live cell with fewer than two neighbors dies (loneliness)</li>
+                    <li><b>Overpopulation:</b> A live cell with more than three neighbors dies (overcrowding)</li>
+                </ol>
+                <br>
+                That's it! These four rules generate everything you see—from stable structures to self-replicating patterns
+                that travel across the screen. Some patterns, like the "Gosper Glider Gun," continuously produce new gliders.
+                Others create complex computational structures that can perform logic operations.
+                <br>
+                <br>
+                <h3>Try It Yourself!</h3>
+                <b>Pen Tip:</b> Draw with the pen tip to toggle cells alive or dead
+                <br>
+                <b>Pen Eraser:</b> Flip the pen over and use the eraser end to pan around the infinite grid
+                <br>
+                <b>Play:</b> Hit the play button and watch your creation evolve
+                <br>
+                <b>Load Patterns:</b> Explore classic patterns like gliders, pulsars, and spaceships
+                <br>
+                <br>
+                <i>Can you create a pattern that travels across the screen? Can you make one that produces infinite growth?</i>
+            </div>
         </div>
-        This is an implementation of Conway's Game of Life,
-        a cellular automaton devised by mathematician John Conway in 1970. It uses the super-fast
-        Hashlife algorithm, written in JavaScript using the <code>canvas</code> tag.
-        <br>
-        <br>
-        Forked from github.com/copy/life
-        <br>
-        <br>
-        <div id="about_main" class="hidden">
-            <h3>Rules of Conway's Game of Life</h3>
-            The universe is an infinite two-dimensional grid of square cells, each of which is either alive or dead.
-            Every cell interacts with its eight neighbors (horizontal, vertical, diagonal). At each step in time, the following transitions occur:
-            <br><br>
-            <ol>
-                <li><b>Birth:</b> A dead cell with exactly three live neighbors becomes alive</li>
-                <li><b>Survival:</b> A live cell with two or three live neighbors stays alive</li>
-                <li><b>Death:</b> A live cell with fewer than two neighbors dies (underpopulation)</li>
-                <li><b>Death:</b> A live cell with more than three neighbors dies (overpopulation)</li>
-            </ol>
-            <br>
-            These simple rules create surprisingly complex patterns and behaviors, including still lifes, oscillators,
-            spaceships, and even patterns that can simulate universal computation.
+
+        <!-- German Content -->
+        <div id="about_de">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Conways Spiel des Lebens</h2>
+                <div class="button" id="lang_toggle_de" title="Switch to English" style="font-size: 20px; cursor: pointer;">
+                    🇬🇧 EN
+                </div>
+            </div>
+            <h3>Wie viel Komplexität kann aus nur vier einfachen Regeln entstehen?</h3>
+            Willkommen bei Conways Spiel des Lebens—eine faszinierende Demonstration, wie komplexes Verhalten aus
+            minimalen Anweisungen entstehen kann. Entwickelt vom Mathematiker John Conway im Jahr 1970, hat dieser
+            zelluläre Automat seit über fünf Jahrzehnten Informatiker, Mathematiker und Künstler in seinen Bann gezogen.
             <br>
             <br>
-            <h3>Controls</h3>
-            <b>Pen tip:</b> Toggle cells (create/delete)
+            <h3>Warum das in der Informatik wichtig ist</h3>
+            <ul>
+                <li><b>Emergenz &amp; Komplexität:</b> Beobachten Sie, wie sich einfache Muster zu Gleitern, Raumschiffen und Oszillatoren entwickeln—eine Demonstration, wie komplexe Systeme aus einfachen Regeln entstehen</li>
+                <li><b>Turing-Vollständigkeit:</b> Das Spiel des Lebens ist universell berechenbar—es kann jedes Computerprogramm simulieren, sogar sich selbst!</li>
+                <li><b>Algorithmus-Optimierung:</b> Diese Demo verwendet den Hashlife-Algorithmus, der Milliarden von Generationen in Sekunden berechnen kann, indem er Musterwiederholugen ausnutzt</li>
+                <li><b>Paralleles Rechnen:</b> Jede Zelle aktualisiert sich unabhängig—ideal zum Studium gleichzeitiger Systeme und GPU-Programmierung</li>
+            </ul>
             <br>
-            <b>Eraser:</b> Move around the view
+            <div id="about_main_de" class="hidden">
+                <h3>Die vier Regeln</h3>
+                Jede Zelle in diesem unendlichen Gitter folgt vier einfachen Regeln pro Generation:
+                <br><br>
+                <ol>
+                    <li><b>Geburt:</b> Eine tote Zelle mit genau <b>drei</b> lebenden Nachbarn wird lebendig</li>
+                    <li><b>Überleben:</b> Eine lebende Zelle mit <b>zwei oder drei</b> Nachbarn überlebt</li>
+                    <li><b>Unterbevölkerung:</b> Eine lebende Zelle mit weniger als zwei Nachbarn stirbt (Einsamkeit)</li>
+                    <li><b>Überbevölkerung:</b> Eine lebende Zelle mit mehr als drei Nachbarn stirbt (Überfüllung)</li>
+                </ol>
+                <br>
+                Das ist alles! Diese vier Regeln erzeugen alles, was Sie sehen—von stabilen Strukturen bis zu selbstreplizierenden
+                Mustern, die über den Bildschirm wandern. Einige Muster, wie die "Gosper-Gleiterkanone", produzieren kontinuierlich
+                neue Gleiter. Andere erzeugen komplexe Rechenstrukturen, die logische Operationen ausführen können.
+                <br>
+                <br>
+                <h3>Probieren Sie es selbst!</h3>
+                <b>Stiftspitze:</b> Zeichnen Sie mit der Stiftspitze, um Zellen lebendig oder tot zu schalten
+                <br>
+                <b>Stift-Radierer:</b> Drehen Sie den Stift um und verwenden Sie das Radierer-Ende, um sich im unendlichen Gitter zu bewegen
+                <br>
+                <b>Abspielen:</b> Drücken Sie die Play-Taste und beobachten Sie die Entwicklung Ihrer Kreation
+                <br>
+                <b>Muster laden:</b> Erkunden Sie klassische Muster wie Gleiter, Pulsare und Raumschiffe
+                <br>
+                <br>
+                <i>Können Sie ein Muster erstellen, das über den Bildschirm wandert? Können Sie eines erstellen, das unendliches Wachstum erzeugt?</i>
+            </div>
         </div>
+
         <br>
         <br>
         <br>
-        <span class="button2 hidden" id="about_close">Ok</span>
+        <span class="button2 hidden" id="about_close"><i class="fa-solid fa-close"></i></span>
     </div>
     <div id="alert" class="hidden">
         <div id="alert_text">
