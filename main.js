@@ -376,10 +376,8 @@ var
             // Idle timer - load random pattern and run after 1 minute of being paused
             var idle_timeout = null;
             var countdown_interval = null;
-            var auto_pause_timeout = null;
             var IDLE_DELAY = 50 * 1000; // 50 seconds before countdown starts
             var COUNTDOWN_SECONDS = 10;
-            var AUTO_PAUSE_DELAY = 15 * 60 * 1000; // 15 minutes
 
             function reset_idle_timer()
             {
@@ -391,9 +389,6 @@ var
                     clearInterval(countdown_interval);
                     countdown_interval = null;
                 }
-                if(auto_pause_timeout) {
-                    clearTimeout(auto_pause_timeout);
-                }
 
                 // Restore play button icon if countdown was showing
                 var run_button = $("run_button");
@@ -403,12 +398,6 @@ var
                     icon.className = "fa-solid fa-play";
                 }
 
-                // Auto-pause after 15 minutes of no interaction
-                auto_pause_timeout = setTimeout(function() {
-                    if(running) {
-                        stop();
-                    }
-                }, AUTO_PAUSE_DELAY);
 
                 idle_timeout = setTimeout(function() {
                     // Don't start countdown if overlay is open
