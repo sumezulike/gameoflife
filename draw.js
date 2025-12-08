@@ -313,18 +313,34 @@ function LifeCanvasDrawer()
             x,
             y;
 
-        // Fixed zoom level at 1:16
-        drawer.cell_width = 16;
-
-        if(isFinite(width) && isFinite(height))
+        if(isFinite(width) && isFinite(height) && width > 0 && height > 0)
         {
+            // Calculate zoom level to fit pattern with some padding
+            var padding = 0.9; // Use 90% of available space
+            var zoom_x = (canvas_width * padding) / width;
+            var zoom_y = (canvas_height * padding) / height;
+            var zoom = Math.min(zoom_x, zoom_y);
+
+            // Clamp to reasonable zoom levels (powers of 2 between 1/16 and 32)
+            if(zoom >= 1) {
+                // Round down to nearest power of 2
+                zoom = Math.pow(2, Math.floor(Math.log2(zoom)));
+                zoom = Math.min(zoom, 32);
+            } else {
+                // Round down to nearest power of 2 fraction
+                zoom = 1 / Math.pow(2, Math.ceil(Math.log2(1 / zoom)));
+                zoom = Math.max(zoom, 1/16);
+            }
+
+            drawer.cell_width = zoom;
+
             x = Math.round(canvas_width / 2 - (bounds.left + width / 2) * drawer.cell_width);
             y = Math.round(canvas_height / 2 - (bounds.top + height / 2) * drawer.cell_width);
         }
         else
         {
             // can happen if the pattern is empty or very large
-
+            drawer.cell_width = 16;
             x = canvas_width >> 1;
             y = canvas_height >> 1;
         }

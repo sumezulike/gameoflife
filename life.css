@@ -365,17 +365,64 @@ canvas {
     width: 215px;
     cursor: pointer;
 }
-#pattern_chooser > div > div:hover {
-    color: #000;
-    background-color: #ff0;
-}
 #pattern_chooser span.size {
     color: #999;
     font-size: 80%;
     margin-left: 7px;
 }
+#pattern_chooser_content {
+    display: flex;
+    gap: 20px;
+    margin: 10px 0;
+}
 #pattern_list {
-    overflow-x: hidden;
+    min-width: 200px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+#pattern_list > div {
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.1s;
+}
+#pattern_list > div:active {
+    background-color: #555;
+}
+#pattern_list > div.selected {
+    background-color: #456;
+    border-color: #7af;
+}
+#pattern_list > div.folder {
+    background-color: #443;
+    border-color: #665;
+}
+#pattern_list > div.folder-back {
+    background-color: #334;
+    border-color: #556;
+}
+#pattern_preview {
+    flex: 1;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    min-width: 250px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+#pattern_preview h3 {
+    margin-top: 0;
+}
+#preview_description {
+    white-space: pre-wrap;
+    font-size: 90%;
+    max-height: 300px;
+    overflow-y: auto;
 }
 br.clear {
     clear: both;

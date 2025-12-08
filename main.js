@@ -79,16 +79,19 @@ var
 
         // example setups which are run at startup
         // loaded from examples/
-        /** @type {Array.<string>} */
-        /*
-        examples = (
-            "turingmachine,Turing Machine|gunstar,Gunstar|hacksaw,Hacksaw|tetheredrake,Tethered rake|" +
-            "primer,Primer|infinitegliderhotel,Infinite glider hotel|" +
-            "p94s,P94S|breeder1,Breeder 1|tlogtgrowth,tlog(t) growth|" +
-            "logt2growth,Log(t)^2 growth|infinitelwsshotel,Infinite LWSS hotel|c5greyship,c/5 greyship"
-        ).split("|");
-        */
-        examples = ["start,Start"];
+        /** @type {Array.<string|{folder: string, patterns: Array.<string>}>} */
+        examples = [
+            "109-still-lifes", "basic-rakes", "c4diagonalspaceships",
+            "c4orthogonalspaceships", "originalglidersbythedozen",
+            "p448dartgun", "turingmachine", "glider_guns",
+            {
+                folder: "guns",
+                patterns: [
+                    "gosperglidergun", "newgun46", "p46gun",
+                    "period45glidergun", "simkinglidergun", "snark"
+                ]
+            }
+        ];
 
 
     /** @type {function(function())} */
@@ -205,21 +208,21 @@ var
         }
         else
         {
-            load_random();
+            load_clear();
         }
 
         if(parameters["noui"] === "1")
         {
             var elements = [
-                "statusbar", "about_button", "examples_menu",
-                "import_button", "settings_button", "zoomout_button",
+                "statusbar", "about_button", "pattern_button",
+                "settings_button", "zoomout_button",
                 "zoomin_button", "clear_button", "superstep_button",
                 "step_button", "rewind_button"
             ];
 
             for(var i = 0; i < elements.length; i++)
             {
-                $(elements[i]).style.display = "none";
+                $(elements[i]).classList.add("hidden");
             }
         }
 
@@ -295,9 +298,17 @@ var
                 },
                 function()
                 {
-                    load_random();
+                    load_clear();
                 }
             );
+        }
+
+        function load_clear()
+        {
+            life.clear_pattern();
+            update_hud();
+            drawer.center_view();
+            drawer.redraw(life.root);
         }
 
         function load_random()
@@ -316,7 +327,7 @@ var
 
         function init_ui()
         {
-            $("about_close").style.display = "inline";
+            show_element($("about_close"));
 
             hide_element($("notice"));
             hide_overlay();
@@ -326,6 +337,7 @@ var
             show_element($("about_button"));
             show_element($("statusbar"));
             show_element($("about_main"));
+            show_element($("pattern_button"));
 
             var style_element = document.createElement("style");
             document.head.appendChild(style_element);
@@ -645,7 +657,7 @@ var
                     var shift_buttons = document.querySelectorAll('.shift-only');
                     for(var i = 0; i < shift_buttons.length; i++)
                     {
-                        shift_buttons[i].style.display = 'none';
+                        shift_buttons[i].classList.add('hidden');
                     }
                 }
             };
@@ -700,105 +712,6 @@ var
                     $("rule").value = this.getAttribute("data-rule");
                 };
             }
-
-            $("import_submit").onclick = function()
-            {
-                var previous = current_pattern && current_pattern.title;
-                var files = $("import_file").files;
-
-                function load(text)
-                {
-                    setup_pattern(text, undefined);
-
-                    if(previous !== current_pattern.title) {
-                        show_alert(current_pattern);
-                        $("import_file").value = "";
-                    }
-                }
-
-                if(files && files.length)
-                {
-                    let filereader = new FileReader();
-                    filereader.onload = function()
-                    {
-                        load(filereader.result);
-                    };
-                    filereader.readAsText(files[0]);
-                }
-                else
-                {
-                    load($("import_text").value);
-                }
-            };
-
-            $("import_abort").onclick = function()
-            {
-                hide_overlay();
-            };
-
-            $("import_button").onclick = function()
-            {
-                show_overlay("import_dialog");
-                $("import_text").value = "";
-
-                set_text($("import_info"), "");
-            };
-
-            $("export_button").onclick = function()
-            {
-                const rle = formats.generate_rle(life, undefined, ["Generated by copy.sh/life"]);
-                download(rle, "pattern.rle");
-            };
-
-            $("randomize_button").onclick = function()
-            {
-                $("randomize_density").value = 0.5;
-                $("randomize_width").value = 200;
-                $("randomize_height").value = 200;
-
-                show_overlay("randomize_dialog");
-            };
-
-            $("randomize_submit").onclick = function()
-            {
-                const density = Math.max(0, Math.min(1, +$("randomize_density").value)) || 0.5;
-                const width = Math.max(0, +$("randomize_width").value) || 200;
-                const height = Math.max(0, +$("randomize_height").value) || 200;
-
-                stop(function()
-                    {
-                        life.clear_pattern();
-
-                        // Note: Not exact density because some points may be repeated
-                        const field_x = new Int32Array(Math.round(width * height * density));
-                        const field_y = new Int32Array(field_x.length);
-
-                        for(let i = 0; i < field_x.length; i++) {
-                            field_x[i] = Math.random() * width;
-                            field_y[i] = Math.random() * height;
-                        }
-
-                        var bounds = life.get_bounds(field_x, field_y);
-                        life.make_center(field_x, field_y, bounds);
-                        life.setup_field(field_x, field_y, bounds);
-
-                        life.save_rewind_state();
-
-                        hide_overlay();
-
-                        fit_pattern();
-                        lazy_redraw(life.root);
-
-                        update_hud();
-
-                        set_title("Random pattern");
-
-                        current_pattern = {
-                            title : "Random pattern",
-                            comment : "",
-                        };
-                    });
-            };
 
             $("settings_submit").onclick = function()
             {
@@ -878,7 +791,6 @@ var
             $("settings_abort").onclick =
                 $("pattern_close").onclick =
                 $("alert_close").onclick =
-                $("randomize_abort").onclick =
                 $("about_close").onclick = function()
             {
                 hide_overlay();
@@ -892,6 +804,10 @@ var
             //$("more_button").onclick = show_pattern_chooser;
             $("pattern_button").onclick = show_pattern_chooser;
 
+            var selected_pattern = null;
+            var selected_pattern_text = null;
+            var current_folder = null;
+
             function show_pattern_chooser()
             {
                 if(patterns_loaded)
@@ -902,71 +818,102 @@ var
 
                 patterns_loaded = true;
 
-                if(false)
+                var list = $("pattern_list");
+                var preview = $("pattern_preview");
+                var preview_title = $("preview_title");
+                var preview_description = $("preview_description");
+
+                function render_list(items, folder_prefix)
                 {
-                    var frame = document.createElement("iframe");
-                    frame.src = "examples/";
-                    frame.id = "example_frame";
-                    $("pattern_list").appendChild(frame);
+                    list.innerHTML = "";
+                    hide_element(preview);
+                    selected_pattern = null;
+                    selected_pattern_text = null;
 
-                    show_overlay("pattern_chooser");
-
-                    window["load_pattern"] = function(id)
+                    // Add back button if in a folder
+                    if(folder_prefix)
                     {
-                        show_overlay("loading_popup");
-                        http_get(rle_link(id), function(text)
-                        {
-                            setup_pattern(text, id);
-                            set_query(id);
-                            show_alert(current_pattern);
-                            life.set_step(0);
-                            set_text($("label_step"), "1");
-                        });
-                    };
-                }
-                else
-                {
-                    patterns_loaded = true;
+                        var back_element = document.createElement("div");
+                        back_element.className = "folder-back";
+                        set_text(back_element, "← Back");
+                        list.appendChild(back_element);
 
-                    show_overlay("loading_popup");
-                    http_get(pattern_path + "list", function(text)
+                        back_element.onclick = function()
+                        {
+                            current_folder = null;
+                            render_list(examples, null);
+                        };
+                    }
+
+                    items.forEach(function(item)
                     {
-                        var patterns = text.split("\n"),
-                            list = $("pattern_list");
+                        var name_element = document.createElement("div");
 
-                        show_overlay("pattern_chooser");
-
-                        patterns.forEach(function(pattern)
+                        // Check if this is a folder
+                        if(typeof item === "object" && item.folder)
                         {
-                            var
-                                name = pattern.split(" ")[0],
-                                size = pattern.split(" ")[1],
-                                name_element = document.createElement("div"),
-                                size_element = document.createElement("span");
-
-                            set_text(name_element, name);
-                            set_text(size_element, size);
-                            size_element.className = "size";
-
-                            name_element.appendChild(size_element);
+                            name_element.className = "folder";
+                            set_text(name_element, "📁 " + item.folder);
                             list.appendChild(name_element);
 
                             name_element.onclick = function()
                             {
-                                show_overlay("loading_popup");
-                                http_get(rle_link(name), function(text)
-                                {
-                                    setup_pattern(text, name);
-                                    set_query(name);
-                                    show_alert(current_pattern);
+                                current_folder = item.folder;
+                                render_list(item.patterns, item.folder + "/");
+                            };
+                        }
+                        else
+                        {
+                            // Regular pattern
+                            var display_name = item;
+                            var pattern_path = folder_prefix ? folder_prefix + item : item;
 
-                                    life.set_step(0);
-                                    set_text($("label_step"), "1");
+                            set_text(name_element, display_name);
+                            list.appendChild(name_element);
+
+                            name_element.onclick = function()
+                            {
+                                // Remove selection from previous item
+                                var prev_selected = list.querySelector(".selected");
+                                if(prev_selected) {
+                                    prev_selected.classList.remove("selected");
+                                }
+                                name_element.classList.add("selected");
+
+                                // Fetch and show pattern info
+                                http_get(rle_link(pattern_path), function(text)
+                                {
+                                    selected_pattern = pattern_path;
+                                    selected_pattern_text = text;
+
+                                    var result = formats.parse_pattern(text.trim());
+                                    var title = result.title || display_name;
+                                    var comment = result.comment || "No description available.";
+
+                                    set_text(preview_title, title);
+                                    set_text(preview_description, comment);
+                                    show_element(preview);
                                 });
                             };
-                        });
+                        }
                     });
                 }
+
+                render_list(examples, null);
+
+                $("pattern_load").onclick = function()
+                {
+                    if(selected_pattern && selected_pattern_text)
+                    {
+                        setup_pattern(selected_pattern_text, selected_pattern);
+                        set_query(selected_pattern);
+
+                        life.set_step(0);
+                        set_text($("label_step"), "1");
+                    }
+                };
+
+                show_overlay("pattern_chooser");
             }
 
             if(false)
@@ -1086,7 +1033,7 @@ var
 
             if(result.error)
             {
-                set_text($("import_info"), result.error);
+                console.error("Pattern parse error:", result.error);
                 return;
             }
         }

@@ -26,16 +26,9 @@
     <div class="button" id="run_button" title="Run"><i class="fa-solid fa-play"></i></div>
     <div class="button" id="step_button" title="Step"><i class="fa-solid fa-forward-step"></i></div>
     <div class="button" id="clear_button" title="Clear"><i class="fa-solid fa-eraser"></i></div>
-
-    <div class="menu shift-only" id="examples_menu" style="display: none;">
-        <div id="pattern_button">Patterns</div>
-    </div>
-    <div id="randomize_button" class="button shift-only" style="display: none;">Randomize</div>
-    <div id="export_button" class="button shift-only" style="display: none;">Export</div>
-    <div id="import_button" class="button shift-only" style="display: none;">Import</div>
-    <div class="button shift-only" id="settings_button" style="display: none;">Settings</div>
-    <div class="button" style="display: none" id="superstep_button">Superstep</div>
-
+    <div class="button hidden" id="pattern_button" title="Patterns"><i class="fa-solid fa-folder-open"></i></div>
+    <div class="button shift-only hidden" id="settings_button">Settings</div>
+    <div class="button hidden" id="superstep_button">Superstep</div>
 
 </div>
 <div id="statusbar" class="hidden">
@@ -48,8 +41,8 @@
     <div id="label_gen" title="Generation">0</div>
     <div id="label_pop" title="Population">0</div>
 </div>
-<div id="overlay">
-    <div id="about">
+<div id="overlay" class="hidden">
+    <div id="about" class="hidden">
         <h2>Conway's Game of Life in JavaScript</h2>
         <div id="notice">
             <h3 style="color: orange">Sorry, this applications needs JavaScript to work.</h3>
@@ -67,7 +60,7 @@
         Forked from github.com/copy/life
         <br>
         <br>
-        <div id="about_main" style="display: none">
+        <div id="about_main" class="hidden">
             <h3>Rules of Conway's Game of Life</h3>
             The universe is an infinite two-dimensional grid of square cells, each of which is either alive or dead.
             Every cell interacts with its eight neighbors (horizontal, vertical, diagonal). At each step in time, the following transitions occur:
@@ -91,57 +84,9 @@
         <br>
         <br>
         <br>
-        <span class="button2" id="about_close" style="display: none">Ok</span>
+        <span class="button2 hidden" id="about_close">Ok</span>
     </div>
-    <div id="randomize_dialog" style="display: none;">
-        <h2>Random Pattern</h2>
-        <div class="left">
-            Width
-        </div>
-        <div class="right">
-            <input type="number" min="1" id="randomize_width" style="width: 60px">
-        </div>
-        <br class="clear">
-        <br>
-        <div class="left">
-            Height
-        </div>
-        <div class="right">
-            <input type="number" min="1" id="randomize_height" style="width: 60px">
-        </div>
-        <br class="clear">
-        <br>
-        <div class="left">
-            Density
-        </div>
-        <div class="right">
-            <input type="number" id="randomize_density" min="0" max="1" step="0.1" style="width: 60px">
-        </div>
-        <br class="clear">
-        <br>
-        <br>
-        <br>
-        <span id="randomize_submit" class="button2">Randomize</span>
-        <span id="randomize_abort" class="button2">Abort</span>
-    </div>
-    <div id="import_dialog" style="display: none;">
-        <h2>Import Pattern</h2>
-        Supports RLE, Life 1.06, Plaintext
-        <br>
-        <br>
-        <textarea placeholder="Paste pattern file here" id="import_text"></textarea>
-        <br>
-        Or: <input type="file" id="import_file">
-        <br>
-        <br>
-        <div id="import_info"></div>
-        <br>
-        <br>
-        <br>
-        <span id="import_submit" class="button2">Import</span>
-        <span id="import_abort" class="button2">Abort</span>
-    </div>
-    <div id="alert" style="display: none;">
+    <div id="alert" class="hidden">
         <div id="alert_text">
             <h2 id="pattern_title"></h2>
             <div id="pattern_description"></div>
@@ -160,13 +105,19 @@
         <br>
         <span class="button2" id="alert_close">Ok</span>
     </div>
-    <div id="pattern_chooser" style="display: none;">
-        Source: <a href="http://www.conwaylife.com/wiki/Main_Page" target="_blank">www.conwaylife.com</a>. Thanks!
-        &mdash; <a href="examples/" target="_blank">List of all patterns</a>
-        <div id="pattern_list"></div>
+    <div id="pattern_chooser" class="hidden">
+        <div id="pattern_chooser_content">
+            <div id="pattern_list"></div>
+            <div id="pattern_preview" class="hidden">
+                <h3 id="preview_title"></h3>
+                <div id="preview_description"></div>
+                <br>
+                <span class="button2" id="pattern_load">Load</span>
+            </div>
+        </div>
         <span class="button2" id="pattern_close">Close</span>
     </div>
-    <div id="settings_dialog" style="display: none;">
+    <div id="settings_dialog" class="hidden">
         <h2>Settings</h2>
         <div class="left" id="select_rules">
             Rule<br>
@@ -217,7 +168,7 @@
         <span id="settings_reset" class="button2">Reset</span>
         <span id="settings_abort" class="button2">Abort</span>
     </div>
-    <div id="loading_popup" style="display: none; font-size: 16px">
+    <div id="loading_popup" class="hidden" style="font-size: 16px">
         <div style="text-align: center">
             <h2>Downloading pattern file</h2>
             Please wait a second.<br><br>
@@ -225,6 +176,5 @@
         </div>
     </div>
 </div>
-<script>document.getElementById("overlay").style.display = "none"</script>
 </body>
 </html>

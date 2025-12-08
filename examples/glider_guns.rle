@@ -1,0 +1,18 @@
+#C A small selection of different glider guns
+x = 242, y = 85, rule = B3/S23
+152bo2bo2bo$152b7o2$152b7o$152bo2bo2bo6$153bo2bo$149b2o2bo2bo$149b2o2b
+o2bo7b2o$164b2o4b2o3bo2bo3b2o$170b5o4b5o$170b2o3bo2bo3b2o$164b3o2$137b
+2ob2o$138bobo23b3o$138bobo6b3o$137b2ob2o$138bobo$138bobo6b3o$137b2ob2o
+$37b2o3b2o$35b3obo2b2o104b2o$34bo4bo108b2o7bo2bo2b2o$34bo2b2ob4o113bo
+2bo2b2o$33b2obobobo2bo113bo2bo$34bobobobo$34bobob2o$35bo2$48b2o$39b2o
+7bo106bo2bo2bo$39b2o5bobo106b7o$46b2o$155b7o$155bo2bo2bo5$36b2o$37bo$
+34b3o$34bo$9bo$9b3o$12bo$11b2o150b2o5b2o27b2o$163b2o5b2o28bo$199bo$2ob
+2o194b2o$2obo$3bo$3b3o4b2o28b2o5b2o$b2o3bo3b2o28b2o5b2o$o2b4o$2obo15b
+2o23b2o$bo2b3o12bobo22b2o$bo5bo13bo$2b5o14b2o187b2o$4bo160b2ob2o23b2o
+14b2ob2o$164bo5bo22b2o15bo2bo$62b2ob2o31bo111bo2bo9b2o$61bo5bo30bobo
+62bo7bo39b2o9bobo15b2o$61bo6bo2b2o14b2o12b2o6b2o52bo2bobo2bo49b2obo15b
+2o$61b3o3bo3b2o14b2o12b2o4bo3bo51b3o3b3o39b2o9b2o$66bo34b2o3bo5bo8b2o
+87bo2bo9bo$98bobo4b2obo3bo8b2o70b2o15bo2bo$98bo7bo5bo80b2o14b2ob2o9bo$
+107bo3bo98b2o10b2o$109b2o44bo65b2obo15b2o$138b2o15b2o65bobo15b2o$138b
+2o16b2o65b2o$151b2o2b2o4$151b2o2b2o$138b2o16b2o7b2o$138b2o15b2o8b2o$
+155bo!
